@@ -57,9 +57,9 @@ ORIG_BUILD_DIR=$BUILD_DIR
 BUILD_DIR=$APP_DIR
 cd $BUILD_DIR
 
-unset LD_LIBRARY_PATH PATH PYTHONPATH
+# unset LD_LIBRARY_PATH PATH PYTHONPATH
 export LD_LIBRARY_PATH="$BUILD_DIR/.heroku/vendor/lib"
-export PATH="$BUILD_DIR/.heroku/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# export PATH="$BUILD_DIR/.heroku/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 # export PYTHONPATH="$BUILD_DIR/.heroku/vendor/lib/python3.5"
 
 # Setup environment
@@ -67,7 +67,7 @@ mkdir -p $CACHE_DIR
 title "Generating environment"
 if [ ! -f $CACHE_DIR/vendor.tar.xz ]; then
 	subtitle "Fetching..."
-	curl -s -L "https://onboardiq.s3.amazonaws.com/heroku16-buildpack-opencv3-v2.tar.gz" > $CACHE_DIR/vendor.tar.xz
+	curl -s -L "https://onboardiq.s3.amazonaws.com/heroku16-buildpack-opencv3-v3.tar.gz" > $CACHE_DIR/vendor.tar.xz
 fi
 subtitle "Unpacking..."
 tar -xvf $CACHE_DIR/vendor.tar.xz -C $BUILD_DIR
@@ -75,7 +75,7 @@ tar -xvf $CACHE_DIR/vendor.tar.xz -C $BUILD_DIR
 # installing application dependencies
 if [ -f $BUILD_DIR/requirements.txt ]; then
 	title "Found requirements.txt, installing dependencies using pip"
-	$BUILD_DIR/.heroku/vendor/bin/pip3 install -r requirements.txt --exists-action=w --src=./.heroku/src --allow-all-external
+	pip install -r requirements.txt --exists-action=w --src=./.heroku/src --allow-all-external
 fi
 
 # creating env variables
