@@ -67,7 +67,7 @@ mkdir -p $CACHE_DIR
 title "Generating environment"
 if [ ! -f $CACHE_DIR/vendor.tar.xz ]; then
 	subtitle "Fetching..."
-	curl -s -L "https://onboardiq.s3.amazonaws.com/heroku16-buildpack-opencv3.tar.gz" > $CACHE_DIR/vendor.tar.xz
+	curl -s -L "https://onboardiq.s3.amazonaws.com/heroku16-buildpack-opencv3-v2.tar.gz" > $CACHE_DIR/vendor.tar.xz
 fi
 subtitle "Unpacking..."
 tar -xvf $CACHE_DIR/vendor.tar.xz -C $BUILD_DIR
