@@ -52,13 +52,13 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 
 APP_DIR="/app"
-deep-mv $BUILD_DIR $APP_DIR
+# deep-mv $BUILD_DIR $APP_DIR
 ORIG_BUILD_DIR=$BUILD_DIR
 BUILD_DIR=$APP_DIR
 cd $BUILD_DIR
 
 # unset LD_LIBRARY_PATH PATH PYTHONPATH
-export LD_LIBRARY_PATH="$BUILD_DIR/.heroku/vendor/lib"
+# export LD_LIBRARY_PATH="$BUILD_DIR/.heroku/vendor/lib"
 # export PATH="$BUILD_DIR/.heroku/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 # export PYTHONPATH="$BUILD_DIR/.heroku/vendor/lib/python3.5"
 
@@ -84,6 +84,11 @@ mkdir -p $BUILD_DIR/.profile.d
 cat <<EOF >$BUILD_DIR/.profile.d/heroku.sh
 export LD_LIBRARY_PATH="\$HOME/.heroku/vendor/lib:\$LD_LIBRARY_PATH"
 export PATH="\$HOME/.heroku/vendor/bin:\$PATH"
+export LIBRARY_PATH="\$HOME/.heroku/vendor/lib:\$LIBRARY_PATH"
+export CPATH="\$HOME/.heroku/vendor/include:\$CPATH"
+export C_INCLUDE_PATH="\$HOME/.heroku/vendor/include:\$C_INCLUDE_PATH"
+export CPLUS_INCLUDE_PATH="\$HOME/.heroku/vendor/include:\$CPLUS_INCLUDE_PATH"
+export CGO_CPPFLAGS="\$HOME/.heroku/vendor/include"
 # export PYTHONPATH="\$HOME/.heroku/vendor/lib/python3.5"
 EOF
 
