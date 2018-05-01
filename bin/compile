@@ -84,14 +84,9 @@ mkdir -p $BUILD_DIR/.profile.d
 cat <<EOF >$BUILD_DIR/.profile.d/heroku.sh
 export LD_LIBRARY_PATH="\$HOME/.heroku/vendor/lib:\$LD_LIBRARY_PATH"
 export PATH="\$HOME/.heroku/vendor/bin:\$PATH"
-# export LIBRARY_PATH="\$HOME/.heroku/vendor/lib:\$LIBRARY_PATH"
-# export CPATH="\$HOME/.heroku/vendor/include:\$CPATH"
-# export C_INCLUDE_PATH="\$HOME/.heroku/vendor/include:\$C_INCLUDE_PATH"
-# export CPLUS_INCLUDE_PATH="\$HOME/.heroku/vendor/include:\$CPLUS_INCLUDE_PATH"
-# export CGO_CPPFLAGS="\$HOME/.heroku/vendor/include"
-# export PYTHONPATH="\$HOME/.heroku/vendor/lib/python3.5"
-export CGO_CPPFLAGS="-I/\$HOME/.heroku/vendor/include"
-# export CGO_LDFLAGS="-L/\$HOME/.heroku/vendor/lib -lopencv_core -lopencv_face -lopencv_videoio -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_objdetect -lopencv_features2d -lopencv_video -lopencv_dnn -lopencv_xfeatures2d -lopencv_plot -lopencv_tracking"
+export CGO_CPPFLAGS="-I\$HOME/.heroku/vendor/include"
+export CGO_LDFLAGS="-L\$HOME/.heroku/vendor/lib -lopencv_core -lopencv_face -lopencv_videoio -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_objdetect -lopencv_features2d -lopencv_video -lopencv_dnn -lopencv_xfeatures2d -lopencv_plot -lopencv_tracking"
+export CGO_CXXFLAGS="--std=c++1z"
 EOF
 
 deep-mv $BUILD_DIR $ORIG_BUILD_DIR
