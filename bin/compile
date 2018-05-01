@@ -50,24 +50,19 @@ deep-rm() {
 
 BUILD_DIR=$1
 CACHE_DIR=$2
+ENV_DIR=$3
 
 APP_DIR="/app"
-# deep-mv $BUILD_DIR $APP_DIR
 ORIG_BUILD_DIR=$BUILD_DIR
 BUILD_DIR=$APP_DIR
 cd $BUILD_DIR
-
-# unset LD_LIBRARY_PATH PATH PYTHONPATH
-# export LD_LIBRARY_PATH="$BUILD_DIR/.heroku/vendor/lib"
-# export PATH="$BUILD_DIR/.heroku/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-# export PYTHONPATH="$BUILD_DIR/.heroku/vendor/lib/python3.5"
 
 # Setup environment
 mkdir -p $CACHE_DIR
 title "Generating environment"
 if [ ! -f $CACHE_DIR/vendor.tar.xz ]; then
 	subtitle "Fetching..."
-	curl -s -L "https://onboardiq.s3.amazonaws.com/heroku16-buildpack-opencv3-v3.tar.gz" > $CACHE_DIR/vendor.tar.xz
+	curl -s -L "https://onboardiq.s3.amazonaws.com/heroku16-buildpack-opencv3.4.1.tar.gz" > $CACHE_DIR/vendor.tar.xz
 fi
 subtitle "Unpacking..."
 tar -xvf $CACHE_DIR/vendor.tar.xz -C $BUILD_DIR
@@ -78,19 +73,23 @@ if [ -f $BUILD_DIR/requirements.txt ]; then
 	pip install -r requirements.txt --exists-action=w --src=./.heroku/src --allow-all-external
 fi
 
-export CGO_CPPFLAGS="-I/app/.heroku/vendor/include"
-export CGO_LDFLAGS="-L/app/.heroku/vendor/lib -lopencv_core -lopencv_face -lopencv_videoio -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_objdetect -lopencv_features2d -lopencv_video -lopencv_dnn -lopencv_xfeatures2d -lopencv_plot -lopencv_tracking"
-export CGO_CXXFLAGS="--std=c++1z"
+# save ENVs for building Golang binaries
+echo "-I$ORIG_BUILD_DIR/.heroku/vendor/include" > $ENV_DIR/CGO_CPPFLAGS
+echo "-L$ORIG_BUILD_DIR/.heroku/vendor/lib -lopencv_core -lopencv_face -lopencv_videoio -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_objdetect -lopencv_features2d -lopencv_video -lopencv_dnn -lopencv_xfeatures2d -lopencv_plot -lopencv_tracking" > $ENV_DIR/CGO_LDFLAGS
+echo "--std=c++1z" > $ENV_DIR/CGO_CXXFLAGS
+
+# export LD_LIBRARY_PATH="$ORIG_BUILD_DIR/.heroku/vendor/lib:\$LD_LIBRARY_PATH"
 
 # creating env variables
 title "Creating environment variables."
 mkdir -p $BUILD_DIR/.profile.d
-cat <<EOF >$BUILD_DIR/.profile.d/heroku.sh
+cat <<EOF >$BUILD_DIR/.profile.d/opencv.sh
 export LD_LIBRARY_PATH="\$HOME/.heroku/vendor/lib:\$LD_LIBRARY_PATH"
 export PATH="\$HOME/.heroku/vendor/bin:\$PATH"
-export CGO_CPPFLAGS="-I\$HOME/.heroku/vendor/include"
-export CGO_LDFLAGS="-L\$HOME/.heroku/vendor/lib -lopencv_core -lopencv_face -lopencv_videoio -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_objdetect -lopencv_features2d -lopencv_video -lopencv_dnn -lopencv_xfeatures2d -lopencv_plot -lopencv_tracking"
-export CGO_CXXFLAGS="--std=c++1z"
+# export CGO_CPPFLAGS="-I$HOME/.heroku/vendor/include"
+# export CGO_LDFLAGS="-L$HOME/.heroku/vendor/lib -lopencv_core -lopencv_face -lopencv_videoio -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_objdetect -lopencv_features2d -lopencv_video -lopencv_dnn -lopencv_xfeatures2d -lopencv_plot -lopencv_tracking"
+# export CGO_CXXFLAGS="--std=c++1z"
 EOF
 
-deep-mv $BUILD_DIR $ORIG_BUILD_DIR
+deep-mv $BUILD_DIR/.heroku $ORIG_BUILD_DIR/.heroku
+deep-mv $BUILD_DIR/.profile.d $ORIG_BUILD_DIR/.profile.d
