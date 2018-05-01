@@ -78,6 +78,10 @@ if [ -f $BUILD_DIR/requirements.txt ]; then
 	pip install -r requirements.txt --exists-action=w --src=./.heroku/src --allow-all-external
 fi
 
+export CGO_CPPFLAGS="-I/app/.heroku/vendor/include"
+export CGO_LDFLAGS="-L/app/.heroku/vendor/lib -lopencv_core -lopencv_face -lopencv_videoio -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_objdetect -lopencv_features2d -lopencv_video -lopencv_dnn -lopencv_xfeatures2d -lopencv_plot -lopencv_tracking"
+export CGO_CXXFLAGS="--std=c++1z"
+
 # creating env variables
 title "Creating environment variables."
 mkdir -p $BUILD_DIR/.profile.d
