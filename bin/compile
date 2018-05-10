@@ -62,23 +62,15 @@ mkdir -p $CACHE_DIR
 title "Generating environment"
 if [ ! -f $CACHE_DIR/vendor.tar.xz ]; then
 	subtitle "Fetching..."
-	curl -s -L "https://onboardiq.s3.amazonaws.com/heroku16-buildpack-opencv3.4.1.tar.gz" > $CACHE_DIR/vendor.tar.xz
+	curl -s -L "https://static.fountain.com/heroku16-buildpack-opencv3.4.1-v4.tar.gz" > $CACHE_DIR/vendor.tar.xz
 fi
 subtitle "Unpacking..."
 tar -xvf $CACHE_DIR/vendor.tar.xz -C $BUILD_DIR
-
-# installing application dependencies
-if [ -f $BUILD_DIR/requirements.txt ]; then
-	title "Found requirements.txt, installing dependencies using pip"
-	pip install -r requirements.txt --exists-action=w --src=./.heroku/src --allow-all-external
-fi
 
 # save ENVs for building Golang binaries
 echo "-I$ORIG_BUILD_DIR/.heroku/vendor/include" > $ENV_DIR/CGO_CPPFLAGS
 echo "-L$ORIG_BUILD_DIR/.heroku/vendor/lib -lopencv_core -lopencv_face -lopencv_videoio -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_objdetect -lopencv_features2d -lopencv_video -lopencv_dnn -lopencv_xfeatures2d -lopencv_plot -lopencv_tracking" > $ENV_DIR/CGO_LDFLAGS
 echo "--std=c++1z" > $ENV_DIR/CGO_CXXFLAGS
-
-# export LD_LIBRARY_PATH="$ORIG_BUILD_DIR/.heroku/vendor/lib:\$LD_LIBRARY_PATH"
 
 # creating env variables
 title "Creating environment variables."
